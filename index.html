@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<script type="text/javascript" language="javascript" src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>        
+<script>
+	requestURL = 'https://nivpar.github.io/jsonhw/songlist.json';
+	request = new XMLHttpRequest();
+	request.open('GET', requestURL);
+	request.send();
+	console.log("testing1")
+	request.onload = function() {
+	  	var data = this.responseText;
+	  	var count = 10;
+	  	document.getElementById('raw').innerHTML = data ;
+	  	var list = JSON.parse(data);
+	  	console.log("testing2");
+	  	for (i = 0; i < count; i++) {
+	  		document.getElementById('nice').innerHTML += list["songs"][i]["title"].bold() + "<br>" +list["songs"][i]["artist"] + "<br>";
+	  		if (list["songs"][i]["genre"].length == 1) {
+	  		document.getElementById('nice').innerHTML += list["songs"][i]["genre"][0];
+	  		} else{
+		  		for (j = 0; j < list["songs"][i]["genre"].length; j++) {
+			  		if (j < list["songs"][i]["genre"].length-1) {
+			  			document.getElementById('nice').innerHTML += list["songs"][i]["genre"][j] + ", ";
+			  		}else {
+		  				document.getElementById('nice').innerHTML += list["songs"][i]["genre"][j];
+		  			}
+				}
+			}
+			document.getElementById('nice').innerHTML += "<br>" + list["songs"][i]["year"] + "<br><br>";
+
+	  	}
+}
+
+
+</script>
+<body>
+	<div id='raw'> </div>
+	<div id='nice'> </div>
+	<form onsubmit = "filter();return false">
+		<select id = "genres"> 
+			<option>Pop Rock</option>
+			<option>Pop</option>
+			<option>Rock</option>
+			<option>Rap</option>
+			<option>R&B</option>
+			<option>Dance</option>
+		</select>
+		<input type = "submit" value = "Filter" />
+	</form>
+	<div id="filtered"> </div>
+</body>
+<script>
+	function filter () {
+		var x = document.getElementById("genres");
+ 		var selectedValue = x.options[x.selectedIndex].value;
+		var data = request.responseText;
+	  	var count = 10;
+	  	var list = JSON.parse(data);
+	  	var found;
+	  	var counter = 0;
+	  	var allsongs = "";
+	  	for (i = 0; i < count; i++) {
+	  		for (j = 0; j < list["songs"][i]["genre"].length; j++) {
+	  			if (selectedValue == list["songs"][i]["genre"][j]) {
+	  				found = true;
+	  				break;
+	  			}else {
+	  				found = false;
+	  			}
+	  		}
+	  		if (found) {
+	  			counter++;
+	  			allsongs += list["songs"][i]["title"].bold() + ", ";
+	  		}
+	  	}
+	  	allsongs = allsongs.slice(0,-2);
+	  	document.getElementById('filtered').innerHTML = "Here are all of the " + selectedValue + " songs: " + allsongs + ".";
+	}
+</script>
+</html>
